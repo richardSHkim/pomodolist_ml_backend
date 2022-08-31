@@ -1,12 +1,34 @@
+import sys
+sys.path.insert(0, './app/object_detection')
 import os
 import ffmpeg
 from tempfile import NamedTemporaryFile
+import torch
 from fastapi import FastAPI, File, UploadFile
 
+from app.object_detection.utils.torch_utils import select_device
+from app.object_detection.models.experimental import attempt_load
 from app.review_status.review_status import review_status
 
 
-app = FastAPI()
+torch.multiprocessing.set_start_method('spawn')
+
+
+def create_app():
+    # load detection model
+    weights = './app/object_detection/weights/yolov7.pt'
+    device = select_device('')
+    half = device.type != 'cpu'  # half precision only supported on CUDA
+    model = attempt_load(weights, map_location=device)  # load FP32 model
+    if half:
+        model.half()  # to FP16
+    stride = int(model.stride.max())
+
+    app = FastAPI()
+    return app, model, device, half, stride
+
+
+app, model, device, half, stride = create_app()
 
 
 @app.get("/")
@@ -15,7 +37,7 @@ def read_root():
 
 
 @app.post("/pyapi/review")
-async def review(video: UploadFile = File(...)):
+def review(video: UploadFile = File(...)):
     # copy data to temporary file
     with NamedTemporaryFile("wb", delete=False) as temp:
         try:
@@ -25,7 +47,7 @@ async def review(video: UploadFile = File(...)):
             print(e)
             return {"message": "There was an error uploading the file"}
         finally:
-            await video.close()
+            video.close()
     
     # encoding with ffmpeg
     with NamedTemporaryFile("wb", delete=False) as encoded_temp:
@@ -41,7 +63,7 @@ async def review(video: UploadFile = File(...)):
 
     # review status
     try:
-        status = review_status(encoded_temp.name+'.mp4')
+        status = review_status(encoded_temp.name+'.mp4', model, device, half, stride)
     except Exception as e:
         print(e)
         return {"message": "There was an error processing the file"}
