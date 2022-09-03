@@ -1,6 +1,13 @@
 import sys
 sys.path.insert(0, './app/object_detection')
 import os
+os.environ["GOOGLE_APPLICATION_CREDENTIALS"]="pomodoro-361106-e342424bbcec.json"
+
+from google.cloud import storage
+
+storage_client = storage.Client()
+buckets = list(storage_client.list_buckets())
+
 import ffmpeg
 from tempfile import NamedTemporaryFile
 import torch
