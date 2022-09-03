@@ -7,13 +7,14 @@ from google.cloud import storage
 
 BUCKET_NAME = 'pomodoro_yolo'
 BLOB_NAME = 'yolov7.pt'
-WEIGHT_DIR = f'./app/object_detection/weights/{BLOB_NAME}'
+WEIGHT_DIR = f'./app/object_detection/weights'
 
 storage_client = storage.Client()
-if not os.path.exists(WEIGHT_DIR):
+if not os.path.exists(os.path.join(WEIGHT_DIR, BLOB_NAME)):
+    os.makedirs(WEIGHT_DIR, exist_ok=True)
     bucket = storage_client.bucket(BUCKET_NAME)
     blob = bucket.blob(BLOB_NAME)
-    blob.download_to_filename(WEIGHT_DIR)
+    blob.download_to_filename(os.path.join(WEIGHT_DIR, BLOB_NAME))
 
 import ffmpeg
 from tempfile import NamedTemporaryFile
@@ -30,7 +31,7 @@ torch.multiprocessing.set_start_method('spawn')
 
 def create_app():
     # load detection model
-    weights = './app/object_detection/weights/yolov7.pt'
+    weights = os.path.join(WEIGHT_DIR, BLOB_NAME)
     device = select_device('')
     half = device.type != 'cpu'  # half precision only supported on CUDA
     model = attempt_load(weights, map_location=device)  # load FP32 model
