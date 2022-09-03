@@ -1,12 +1,19 @@
 import sys
 sys.path.insert(0, './app/object_detection')
 import os
-os.environ["GOOGLE_APPLICATION_CREDENTIALS"]="pomodoro-361106-e342424bbcec.json"
+os.environ["GOOGLE_APPLICATION_CREDENTIALS"]="credentials/pomodoro-361106-e342424bbcec.json"
 
 from google.cloud import storage
 
+BUCKET_NAME = 'pomodoro_yolo'
+BLOB_NAME = 'yolov7.pt'
+WEIGHT_DIR = f'./app/object_detection/weights/{BLOB_NAME}'
+
 storage_client = storage.Client()
-buckets = list(storage_client.list_buckets())
+if not os.path.exists(WEIGHT_DIR):
+    bucket = storage_client.bucket(BUCKET_NAME)
+    blob = bucket.blob(BLOB_NAME)
+    blob.download_to_filename(WEIGHT_DIR)
 
 import ffmpeg
 from tempfile import NamedTemporaryFile
