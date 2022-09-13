@@ -1,7 +1,7 @@
 import sys
 sys.path.insert(0, './app/object_detection')
 import os
-os.environ["GOOGLE_APPLICATION_CREDENTIALS"]="credentials/pomodoro-361106-e342424bbcec.json"
+# os.environ["GOOGLE_APPLICATION_CREDENTIALS"]="credentials/pomodoro-361106-e342424bbcec.json"
 
 from google.cloud import storage
 
@@ -9,8 +9,8 @@ BUCKET_NAME = 'pomodoro_yolo'
 BLOB_NAME = 'yolov7.pt'
 WEIGHT_DIR = f'./app/object_detection/weights'
 
-storage_client = storage.Client()
 if not os.path.exists(os.path.join(WEIGHT_DIR, BLOB_NAME)):
+    storage_client = storage.Client()
     os.makedirs(WEIGHT_DIR, exist_ok=True)
     bucket = storage_client.bucket(BUCKET_NAME)
     blob = bucket.blob(BLOB_NAME)
