@@ -1,0 +1,22 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: pomodolist-ml-backend
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: pomodolist-ml-backend-app
+  template:
+    metadata:
+      labels:
+        app: pomodolist-ml-backend-app
+    spec:
+      containers:
+      - name: pomodolist-ml-be
+        image: us-central1-docker.pkg.dev/pomodolist-362812/pomodolist/pomodolist-ml-backend-image:tag1
+        ports:
+        - containerPort: 8000
+        resources:
+          limits:
+            nvidia.com/gpu: 1
