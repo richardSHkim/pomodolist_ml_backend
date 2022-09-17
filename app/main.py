@@ -1,21 +1,6 @@
-import sys
-sys.path.insert(0, './app/object_detection')
 import os
-# os.environ["GOOGLE_APPLICATION_CREDENTIALS"]="credentials/pomodoro-361106-e342424bbcec.json"
 
 from google.cloud import storage
-
-BUCKET_NAME = 'pomodoro_yolo'
-BLOB_NAME = 'yolov7.pt'
-WEIGHT_DIR = f'./app/object_detection/weights'
-
-if not os.path.exists(os.path.join(WEIGHT_DIR, BLOB_NAME)):
-    storage_client = storage.Client()
-    os.makedirs(WEIGHT_DIR, exist_ok=True)
-    bucket = storage_client.bucket(BUCKET_NAME)
-    blob = bucket.blob(BLOB_NAME)
-    blob.download_to_filename(os.path.join(WEIGHT_DIR, BLOB_NAME))
-
 import ffmpeg
 from tempfile import NamedTemporaryFile
 import torch
@@ -27,6 +12,17 @@ from app.review_status.review_status import review_status
 
 
 torch.multiprocessing.set_start_method('spawn')
+
+
+WEIGHT_DIR = f'./app/object_detection/weights'
+BUCKET_NAME = 'pomodolist-yolo'
+BLOB_NAME = 'yolov7.pt'
+if not os.path.exists(os.path.join(WEIGHT_DIR, BLOB_NAME)):
+    storage_client = storage.Client()
+    os.makedirs(WEIGHT_DIR, exist_ok=True)
+    bucket = storage_client.bucket(BUCKET_NAME)
+    blob = bucket.blob(BLOB_NAME)
+    blob.download_to_filename(os.path.join(WEIGHT_DIR, BLOB_NAME))
 
 
 def create_app():
