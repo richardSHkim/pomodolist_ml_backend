@@ -15,7 +15,7 @@ spec:
       serviceAccountName: bucket-ksa
       containers:
       - name: pomodolist-ml-be
-        image: us-central1-docker.pkg.dev/pomodolist-362812/pomodolist/pomodolist-ml-backend-image:tag1
+        image: us-central1-docker.pkg.dev/pomodolist-362812/pomodolist/pomodolist-ml-backend-image:1.0.0
         ports:
         - containerPort: 8000
         resources:
