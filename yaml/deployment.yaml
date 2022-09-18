@@ -12,6 +12,7 @@ spec:
       labels:
         app: pomodolist-ml-backend-app
     spec:
+      serviceAccountName: bucket-ksa
       containers:
       - name: pomodolist-ml-be
         image: us-central1-docker.pkg.dev/pomodolist-362812/pomodolist/pomodolist-ml-backend-image:tag1
