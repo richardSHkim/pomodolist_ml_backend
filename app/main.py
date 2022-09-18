@@ -17,7 +17,7 @@ torch.multiprocessing.set_start_method('spawn')
 
 
 WEIGHT_DIR = f'./app/object_detection/weights'
-BUCKET_NAME = 'pomodolist-yolo'
+BUCKET_NAME = 'pomodolist_bucket'
 BLOB_NAME = 'yolov7.pt'
 if not os.path.exists(os.path.join(WEIGHT_DIR, BLOB_NAME)):
     storage_client = storage.Client()
