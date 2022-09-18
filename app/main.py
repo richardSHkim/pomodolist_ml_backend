@@ -1,4 +1,6 @@
 import os
+import sys
+sys.path.insert(0, './app/object_detection')
 
 from google.cloud import storage
 import ffmpeg
